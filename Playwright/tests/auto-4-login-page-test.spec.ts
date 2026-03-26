@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('User can successfully log in', async ({ page }) => {
+test('User can successfully login', async ({ page }) => {
   await page.goto('/login');
   
   await page.fill('input[name="email"]', 'test@example.com');
@@ -9,5 +9,5 @@ test('User can successfully log in', async ({ page }) => {
   await page.click('button[type="submit"]');
   
   await expect(page).toHaveURL('/dashboard');
-  await expect(page.getByText('Welcome')).toBeVisible();
+  await expect(page.locator('[data-testid="welcome-message"]')).toBeVisible();
 });
