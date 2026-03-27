@@ -1,53 +1,38 @@
-import './App.css';
-import React, { useEffect, useState } from 'react'
-import Recipe from './recipe';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AppProvider, useApp } from './context/AppContext';
+import Navbar from './components/Navbar';
+import LoginPage from './pages/LoginPage';
+import HomePage from './pages/HomePage';
+import RecipeDetailPage from './pages/RecipeDetailPage';
+import FavoritesPage from './pages/FavoritesPage';
+import AboutPage from './pages/AboutPage';
 
-const App = () => {
+const ProtectedRoute = ({ children }) => {
+  const { user } = useApp();
+  return user ? children : <Navigate to="/login" replace />;
+};
 
-  const APP_ID ='afc94c63';
-  const APP_KEY = '5ff1c5fd034cff389748a20b3634cc21';
-  //const example_req = `https://api.edamam.com/search?q=chicken&app_id=${APP_ID}&app_key=${APP_KEY}`;
-  
-  const [recipes,setRecipes ] = useState([]);
-  const [search,setSearch] = useState('');
-  const [query,setQuery] = useState('chicken')
-
-  useEffect(()=>{
-    getRecipes()
-  },[query])
-
-  
-  const getRecipes = async ()=>{
-    const response = await fetch(`https://api.edamam.com/search?q=${query}&app_id=${APP_ID}&app_key=${APP_KEY}`);
-    const data = await response.json();
-    setRecipes(data.hits);
-    console.log(data.hits);
-  }
-
-  const updateSearch = e =>{
-    setSearch(e.target.value)
-  }
-  
-  const getSearch= e=>{
-      e.preventDefault();
-      setQuery(search);
-      setSearch('');
-  }
-
-
+const AppRoutes = () => {
+  const { user } = useApp();
   return (
-    <div className='App'>
-       <form className='search-form' onSubmit={getSearch}>
-          <input className='search-bar' type='text' value={search} onChange={updateSearch}/>
-          <button className='search-btn' type='submit'>Search</button>
-       </form>
-       <div className='recipes'>
-       {recipes.map(recipe=>(
-        <Recipe title= {recipe.recipe.label} calories={recipe.recipe.calories} image={recipe.recipe.image} ingredients = {recipe.recipe.ingredients} key={recipe.recipe.label}/>
-       ))}
-       </div>
-    </div>
-  )
-}
+    <BrowserRouter>
+      {user && <Navbar />}
+      <Routes>
+        <Route path="/login" element={user ? <Navigate to="/" replace /> : <LoginPage />} />
+        <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+        <Route path="/recipe" element={<ProtectedRoute><RecipeDetailPage /></ProtectedRoute>} />
+        <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
+        <Route path="/about" element={<ProtectedRoute><AboutPage /></ProtectedRoute>} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
-export default App
+const App = () => (
+  <AppProvider>
+    <AppRoutes />
+  </AppProvider>
+);
+
+export default App;

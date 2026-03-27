@@ -1,0 +1,54 @@
+.favorites-page {
+  min-height: calc(100vh - 64px);
+  background: #f7f3ee;
+  padding: 40px 32px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.favorites-header {
+  margin-bottom: 32px;
+}
+
+.favorites-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #1a1a2e;
+  margin: 0 0 6px;
+}
+
+.favorites-header p {
+  color: #888;
+  margin: 0;
+}
+
+.favorites-empty {
+  text-align: center;
+  padding: 80px 20px;
+  color: #aaa;
+}
+
+.empty-icon {
+  font-size: 4rem;
+  display: block;
+  margin-bottom: 16px;
+  color: #e74c3c;
+}
+
+.favorites-empty h2 {
+  font-size: 1.4rem;
+  color: #555;
+  margin: 0 0 10px;
+}
+
+.favorites-empty p {
+  font-size: 1rem;
+  color: #999;
+  margin: 0;
+}
+
+.favorites-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px;
+}
