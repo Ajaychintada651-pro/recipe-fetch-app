@@ -1,0 +1,13 @@
+{
+  "name": "playwright-tests",
+  "version": "1.0.0",
+  "description": "Auto-generated Playwright end-to-end tests",
+  "scripts": {
+    "test": "playwright test",
+    "test:report": "playwright test --reporter=html,json",
+    "show-report": "playwright show-report"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.43.0"
+  }
+}
