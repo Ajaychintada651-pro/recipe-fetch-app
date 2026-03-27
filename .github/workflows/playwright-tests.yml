@@ -1,16 +1,11 @@
 name: Playwright Auto Tests
 
 on:
-  push:
-    branches:
-      - playwright_mcp_githubflow
-    paths:
-      - "Playwright/tests/**"
   workflow_dispatch:
     inputs:
       issue_number:
         description: "GitHub issue number to comment results on"
-        required: false
+        required: true
 
 permissions:
   issues: write
@@ -62,18 +57,12 @@ jobs:
           path: Playwright/test-results/results.json
           retention-days: 30
 
-      - name: Extract issue number from commit message
+      - name: Set issue number
         id: extract_issue
         if: always()
         run: |
-          COMMIT_MSG="${{ github.event.head_commit.message }}"
-          ISSUE_NUM=$(echo "$COMMIT_MSG" | grep -oP '(?<=#)\d+' | head -1)
-          # Fallback: workflow_dispatch input
-          if [ -z "$ISSUE_NUM" ]; then
-            ISSUE_NUM="${{ github.event.inputs.issue_number }}"
-          fi
-          echo "issue_number=$ISSUE_NUM" >> $GITHUB_OUTPUT
-          echo "Found issue number: $ISSUE_NUM"
+          echo "issue_number=${{ github.event.inputs.issue_number }}" >> $GITHUB_OUTPUT
+          echo "Issue number: ${{ github.event.inputs.issue_number }}"
 
       - name: Build and post report comment
         if: always() && steps.extract_issue.outputs.issue_number != ''
