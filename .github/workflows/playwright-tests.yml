@@ -6,6 +6,10 @@ on:
       issue_number:
         description: "GitHub issue number to comment results on"
         required: true
+      test_file:
+        description: "Relative path of test file to run (e.g. tests/auto-42-foo.spec.ts). Leave empty to run all tests."
+        required: false
+        default: ""
 
 permissions:
   issues: write
@@ -36,7 +40,7 @@ jobs:
 
       - name: Run Playwright tests
         working-directory: Playwright
-        run: npx playwright test --reporter=html,json,github
+        run: npx playwright test ${{ github.event.inputs.test_file }} --reporter=html,json,github
         env:
           BASE_URL: ${{ vars.PLAYWRIGHT_BASE_URL }}
         continue-on-error: true  # Always proceed to report step
@@ -123,7 +127,7 @@ jobs:
             }
 
             body += `📎 [Download Full HTML Report](${artifactUrl}) | 🔗 [View Actions Run](${runUrl})\n`;
-            body += `\n> Run #${runNumber} triggered by commit \`${{ github.sha }}`.substring(0, 7) + '\`';
+            body += `\n> Run #${runNumber} triggered by commit \`${context.sha.substring(0, 7)}\``;
 
             await github.rest.issues.createComment({
               owner: context.repo.owner,
