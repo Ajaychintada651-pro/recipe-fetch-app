@@ -40,7 +40,7 @@ jobs:
 
       - name: Run Playwright tests
         working-directory: Playwright
-        run: npx playwright test ${{ github.event.inputs.test_file }} --reporter=html,json,github
+        run: npx playwright test ${{ github.event.inputs.test_file }}
         env:
           BASE_URL: ${{ vars.PLAYWRIGHT_BASE_URL }}
         continue-on-error: true  # Always proceed to report step
