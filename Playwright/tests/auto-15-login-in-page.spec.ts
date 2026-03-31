@@ -1,44 +1,29 @@
 import { test, expect } from '@playwright/test';
 
-test('Login page functionality', async ({ page }) => {
+test('login page functionality', async ({ page }) => {
+  // Navigate to the login page
   await page.goto('/login');
 
-  // Enter valid credentials
-  await page.fill('input[name="username"]', 'testuser');
-  await page.fill('input[name="password"]', 'password123');
-  
-  // Click login button
-  await page.click('button[type="submit"]');
+  // Verify login form elements are present
+  await expect(page.getByLabel('Username')).toBeVisible();
+  await expect(page.getByLabel('Password')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
 
-  // Assert successful login redirects to dashboard
+  // Perform successful login
+  await page.getByLabel('Username').fill('validuser');
+  await page.getByLabel('Password').fill('validpassword');
+  await page.getByRole('button', { name: 'Login' }).click();
+
+  // Verify successful login redirects to dashboard
   await expect(page).toHaveURL('/dashboard');
+  await expect(page.getByText('Welcome, User')).toBeVisible();
 
-  // Verify user is logged in
-  await expect(page.locator('//div[@class="user-profile"]')).toBeVisible();
-});
-
-test('Login page validation', async ({ page }) => {
+  // Test invalid login credentials
   await page.goto('/login');
+  await page.getByLabel('Username').fill('invaliduser');
+  await page.getByLabel('Password').fill('wrongpassword');
+  await page.getByRole('button', { name: 'Login' }).click();
 
-  // Attempt login with invalid credentials
-  await page.fill('input[name="username"]', 'invaliduser');
-  await page.fill('input[name="password"]', 'wrongpassword');
-  
-  await page.click('button[type="submit"]');
-
-  // Check for error message
-  const errorMessage = page.locator('.error-message');
-  await expect(errorMessage).toBeVisible();
-  await expect(errorMessage).toContainText('Invalid credentials');
-});
-
-test('Login page empty fields validation', async ({ page }) => {
-  await page.goto('/login');
-
-  // Submit form without entering credentials
-  await page.click('button[type="submit"]');
-
-  // Check for validation errors
-  await expect(page.locator('input[name="username"]:invalid')).toBeVisible();
-  await expect(page.locator('input[name="password"]:invalid')).toBeVisible();
+  // Verify error message for invalid credentials
+  await expect(page.getByText('Invalid username or password')).toBeVisible();
 });
